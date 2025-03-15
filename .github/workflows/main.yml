@@ -9,6 +9,8 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.set-tag.outputs.IMAGE_TAG }}  # Pass IMAGE_TAG as output
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -19,10 +21,15 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build Docker Image
+      - name: Set Image Tag
+        id: set-tag
         run: |
           IMAGE_TAG=$(date +%Y%m%d%H%M%S)  # Timestamp-based tag
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_OUTPUT  # Store as output
+
+      - name: Build Docker Image
+        run: |
           docker build -t secdevopsjourney/my-app-nextjs:$IMAGE_TAG .
 
       - name: Push Docker Image
@@ -55,9 +62,9 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GH_PAT_GITOPS }}  # Use a GitHub PAT if private repo
-          commit-message: "Update image to ${{ env.IMAGE_TAG }}"
-          branch: "update-image-${{ env.IMAGE_TAG }}"
-          title: "Deploy new version ${{ env.IMAGE_TAG }}"
+          commit-message: "Update image to ${{ needs.build-and-push.outputs.image_tag }}"
+          branch: "update-image-${{ needs.build-and-push.outputs.image_tag }}"
+          title: "Deploy new version ${{ needs.build-and-push.outputs.image_tag }}"
           body: "Auto-generated PR to deploy new image version."
           base: "main"
       #   Uncomment for a completly automated deployment (without PR review)
