@@ -38,11 +38,14 @@ jobs:
           echo "Token length: ${#GH_PAT_GITOPS}"
         env:
           GH_PAT_GITOPS: ${{ secrets.GH_PAT_GITOPS }}
+
       - name: Checkout GitOps Repository
         uses: actions/checkout@v4
         with:
-          repository: aminrj/homelab-terraform-gitops-repo
+          repository: aminrj/homelab-terraform-gitops-infra
           token: ${{ secrets.GH_PAT_GITOPS }}  # Use a GitHub PAT if private repo
+          persist-credentials: false  # Explicitly disable default GitHub authentication
+          ref: main  # Explicitly specify the branch
 
       - name: Update Image Tag in Deployment
         run: |
