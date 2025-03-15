@@ -36,7 +36,7 @@ jobs:
       - name: Checkout GitOps Repository
         uses: actions/checkout@v4
         with:
-          repository: my-org/gitops-repo
+          repository: aminrj/homelab-terraform-gitops-repo
           token: ${{ secrets.GH_PAT_GITOPS }}  # Use a GitHub PAT if private repo
 
       - name: Update Image Tag in Deployment
