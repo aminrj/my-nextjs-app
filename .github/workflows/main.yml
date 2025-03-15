@@ -33,6 +33,11 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
+      - name: Debug Secret Token
+        run: |
+          echo "Token length: ${#GH_PAT_GITOPS}"
+        env:
+          GH_PAT_GITOPS: ${{ secrets.GH_PAT_GITOPS }}
       - name: Checkout GitOps Repository
         uses: actions/checkout@v4
         with:
@@ -46,6 +51,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
+          token: ${{ secrets.GH_PAT_GITOPS }}  # Use a GitHub PAT if private repo
           commit-message: "Update image to ${{ env.IMAGE_TAG }}"
           branch: "update-image-${{ env.IMAGE_TAG }}"
           title: "Deploy new version ${{ env.IMAGE_TAG }}"
