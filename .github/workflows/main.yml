@@ -41,7 +41,7 @@ jobs:
 
       - name: Update Image Tag in Deployment
         run: |
-          sed -i "s|image: aminrj/my-nextjs-app:.*|image: aminrj/my-nextjs-app:${{ env.IMAGE_TAG }}|" apps/my-app/dev/deployment.yaml
+          sed -i "s|image: aminrj/my-nextjs-app:.*|image: aminrj/my-nextjs-app:${{ env.IMAGE_TAG }}|" apps/nextjs-app/dev/deployment.yaml
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
